@@ -1,0 +1,65 @@
+@mixin subtle-black-shadow {
+  -webkit-box-shadow: 0px 0px 7px 1px rgba(84, 79, 85, 0.51);
+  -moz-box-shadow: 0px 0px 7px 1px rgba(84, 79, 85, 0.51);
+  box-shadow: 0px 0px 7px 1px rgba(84, 79, 85, 0.51);
+}
+
+
+@mixin super-subtle-shadow {
+  -webkit-box-shadow: 0px 0px 6px 5px rgba(209,209,209,0.46);
+  -moz-box-shadow: 0px 0px 6px 5px rgba(209,209,209,0.46);
+  box-shadow: 0px 0px 6px 5px rgba(209,209,209,0.46);
+}
+
+@mixin round-item {
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
+
+@mixin small-item-hover-shadow {
+  -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.05),0 4px 10px rgba(90,97,105,.25);
+  -moz-box-shadow: 0 5px 15px rgba(0,0,0,.05),0 4px 10px rgba(90,97,105,.25);
+
+  box-shadow: 0 5px 15px rgba(0,0,0,.05),0 4px 10px rgba(90,97,105,.25);
+}
+
+
+@mixin slow-spin {
+  -webkit-animation: spin 2150ms infinite linear;
+  -moz-animation: spin 2150ms infinite linear;
+  animation: spin 2150ms infinite linear;
+}
+
+@-webkit-keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes spin {
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+
+@mixin clean-card-with-shadow {
+  -webkit-box-shadow: 0 0 25px rgba(40, 47, 60, 0.05), 0 20px 25px rgba(40, 47, 60, 0.05), 0 3px 4px rgba(40, 47, 60, 0.05);
+  -moz-box-shadow: 0 0 25px rgba(40, 47, 60, 0.05), 0 20px 25px rgba(40, 47, 60, 0.05), 0 3px 4px rgba(40, 47, 60, 0.05);
+  box-shadow: 0 0 25px rgba(40, 47, 60, 0.05), 0 20px 25px rgba(40, 47, 60, 0.05), 0 3px 4px rgba(40, 47, 60, 0.05);
+  background: #fff;
+}
+
+@mixin wide-black-shadow {
+  box-shadow: 0 .46875rem 2.1875rem rgba(90,97,105,.1),0 .9375rem 1.40625rem rgba(90,97,105,.1),0 .25rem .53125rem rgba(90,97,105,.12),0 .125rem .1875rem rgba(90,97,105,.1);
+  -webkit-box-shadow: 0 .46875rem 2.1875rem rgba(90,97,105,.1),0 .9375rem 1.40625rem rgba(90,97,105,.1),0 .25rem .53125rem rgba(90,97,105,.12),0 .125rem .1875rem rgba(90,97,105,.1);
+  -moz-box-shadow: 0 .46875rem 2.1875rem rgba(90,97,105,.1),0 .9375rem 1.40625rem rgba(90,97,105,.1),0 .25rem .53125rem rgba(90,97,105,.12),0 .125rem .1875rem rgba(90,97,105,.1);
+  -o-box-shadow: 0 .46875rem 2.1875rem rgba(90,97,105,.1),0 .9375rem 1.40625rem rgba(90,97,105,.1),0 .25rem .53125rem rgba(90,97,105,.12),0 .125rem .1875rem rgba(90,97,105,.1);
+}
+
+@mixin subtle-round-corner {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}

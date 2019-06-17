@@ -1,0 +1,41 @@
+
+
+//copy free version to svn
+xcopy "C:\xampp\htdocs\wordpress\wp-content\plugins\bc-menu-bar-cart" "C:\Users\MYN\Documents\wp-svn-repo\bc-menu-cart-woo\trunk" /sy /exclude:C:\xampp\htdocs\wordpress\wp-content\plugins\bc-menu-bar-cart\exclude-free.txt
+
+
+
+//copy free version to test
+xcopy "C:\xampp\htdocs\wordpress\wp-content\plugins\bc-menu-bar-cart" "C:\xampp\htdocs\test\wp-content\plugins\menu-cart" /sy /exclude:C:\xampp\htdocs\wordpress\wp-content\plugins\bc-menu-bar-cart\exclude-free.txt
+
+
+//copy pro version
+xcopy "C:\xampp\htdocs\wordpress\wp-content\plugins\bc-menu-bar-cart" "C:\Users\MYN\Documents\plugins\bc-menu-cart-icon" /sy /exclude:C:\xampp\htdocs\wordpress\wp-content\plugins\bc-menu-bar-cart\exclude-pro.txt
+
+//test pro version
+xcopy "C:\xampp\htdocs\wordpress\wp-content\plugins\bc-menu-bar-cart" "C:\xampp\htdocs\test\wp-content\plugins\menu-cart"  /sy /exclude:C:\xampp\htdocs\wordpress\wp-content\plugins\bc-menu-bar-cart\exclude-pro.txt
+
+
+
+
+/-------------------------
+    ON MAC
+/--------------------------
+
+MAC
+
+free
+to svn
+rsync -avz --exclude-from '/Applications/MAMP/htdocs/wordpress/wp-content/plugins/bc-menu-bar-cart/exclude-free.txt' /Applications/MAMP/htdocs/wordpress/wp-content/plugins/bc-menu-bar-cart/ /Users/myn/Documents/wpsvn/bc-menu-cart-woo/trunk/
+
+to test
+rsync -avz --exclude-from '/Applications/MAMP/htdocs/wordpress/wp-content/plugins/bc-menu-bar-cart/exclude-free.txt' /Applications/MAMP/htdocs/wordpress/wp-content/plugins/bc-menu-bar-cart/ /Applications/MAMP/htdocs/test/wp-content/plugins/bc-menu-cart-woo/
+
+
+pro
+rsync -avz --exclude-from '/Applications/MAMP/htdocs/wordpress/wp-content/plugins/bc-menu-bar-cart/exclude-pro.txt' /Applications/MAMP/htdocs/wordpress/wp-content/plugins/bc-menu-bar-cart/ /Users/myn/Documents/releases/bc-menu-cart-woo/
+
+
+//test pro
+rsync -avz --exclude-from '/Applications/MAMP/htdocs/wordpress/wp-content/plugins/bc-menu-bar-cart/exclude-pro.txt' /Applications/MAMP/htdocs/wordpress/wp-content/plugins/bc-menu-bar-cart/ /Applications/MAMP/htdocs/test/wp-content/plugins/bc-menu-cart-woo/
+

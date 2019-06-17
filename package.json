@@ -1,0 +1,24 @@
+{
+  "name": "bc-menu-bar-cart",
+  "version": "1.0.0",
+  "description": "=== WooCommerce Menu Cart === Contributors: jprummer, pomegranate Donate link: https://www.wpovernight.com/ Tags: woocommerce, menu, bar, cart, basket, header, shopping cart, navigation, edd, ecommerce, eshop, wp-ecommerce, jigoshop, wpec Requires at least: 3.4 Tested up to: 5.2 Requires PHP: 5.3 Stable tag: 2.7.5",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-contrib-compass": "^1.1.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^3.4.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "load-grunt-tasks": "^4.0.0"
+  },
+  "dependencies": {
+    "sweetalert": "^2.1.2"
+  }
+}

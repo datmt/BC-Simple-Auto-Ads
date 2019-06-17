@@ -1,0 +1,59 @@
+//this file contains class and settings for the backend,
+//the class prefix is bc-doc stands for bc-document
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap');
+
+
+  .bc-doc {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+
+    .bc-uk-card {
+      margin-bottom: 20px;
+    }
+
+    .bc-doc-heading-1 {
+
+      font-size: 38px;
+
+      margin-top: 0;
+      margin-bottom: 20px;
+      line-height: 45.6px;
+      border-bottom: 3px solid #ddd;
+
+    }
+
+    .bc-doc-heading-2 {
+
+      font-size: 24px;
+      margin: 20px 0;
+      font-weight: 300;
+      line-height: 33.6px;
+      border-bottom: 2px solid #dde;
+
+    }
+
+    .bc-doc-heading-3 {
+
+      font-size: 20px;
+      line-height: 28.6px;
+      margin: 20px 10px 5px;
+      border-bottom: 1px solid #ddd;
+
+      &+table, &+div  {
+        margin-left: 10px;
+      }
+
+    }
+
+    .bc-doc-label {
+      font-size: 1rem;
+      line-height: 22.4px;
+      margin: 20px 0 5px;
+    }
+
+    .bc-doc__image-picker-button {
+      display: block;
+
+    }
+  }
+

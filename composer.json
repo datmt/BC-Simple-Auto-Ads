@@ -1,0 +1,15 @@
+{
+    "name": "myn/bc-menu-bar-cart",
+    "authors": [
+        {
+            "name": "myn",
+            "email": "myn@pro.com"
+        }
+    ],
+    "require-dev": {
+
+    },
+    "require": {
+        "symfony/var-dumper": "^4.2"
+    }
+}
