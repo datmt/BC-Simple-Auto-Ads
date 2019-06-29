@@ -24,7 +24,7 @@ class BC_Static_UI
     }
 
     /**
-     * @param array $content array(array('title' => 'title', 'content' => string, 'is_active" => false, 'is_disabled' => false))
+     * @param array $content array(array('title' => 'title', 'content' => array of string, 'is_active" => false, 'is_disabled' => false))
      * @param bool $echo echo or not
      *
      * @return string|void
@@ -40,7 +40,7 @@ class BC_Static_UI
             $disabled_class = isset($item['is_disabled']) && $item['is_disabled']? 'bc-uk-disabled' : '';
             $tab_head .= sprintf('<li class="%1$s %2$s" ><a href="#">%3$s</a></li>', $disabled_class, $active_class, $item['title']);
 
-            $tab_body .= sprintf('<li>%1$s</li>', $item['content']);
+            $tab_body .= sprintf('<li>%1$s</li>', implode("", $item['content']));
         }
 
         $tab_head = sprintf('<ul bc-uk-tab>%1$s</ul>', $tab_head);
