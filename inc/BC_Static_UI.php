@@ -3,7 +3,7 @@
 /**
  * This class print UI elements that aren't dependent on any particular form (without creating a form instance)
  */
-namespace BinaryCarpenter\BC_MNC;
+namespace BinaryCarpenter\BC_CP;
 
 class BC_Static_UI
 {
@@ -21,6 +21,39 @@ class BC_Static_UI
             echo $output;
         else
             return $output;
+    }
+
+    /**
+     * @param array $content array(array('title' => 'title', 'content' => string, 'is_active" => false, 'is_disabled' => false))
+     * @param bool $echo echo or not
+     *
+     * @return string|void
+     */
+    public static function tabs($content, $echo = false)
+    {
+        $tab_head = '';
+        $tab_body = '';
+
+        foreach ($content as $item)
+        {
+            $active_class = isset($item['is_active']) && $item['is_active']? 'bc-uk-active' : '';
+            $disabled_class = isset($item['is_disabled']) && $item['is_disabled']? 'bc-uk-disabled' : '';
+            $tab_head .= sprintf('<li class="%1$s %2$s" ><a href="#">%3$s</a></li>', $disabled_class, $active_class, $item['title']);
+
+            $tab_body .= sprintf('<li>%1$s</li>', $item['content']);
+        }
+
+        $tab_head = sprintf('<ul bc-uk-tab>%1$s</ul>', $tab_head);
+
+        $tab_body = sprintf('<ul class="bc-uk-switcher">%1$s</ul>', $tab_body);
+
+        $html = $tab_head.$tab_body;
+
+        if ($echo)
+            echo $html;
+        else
+            return $html;
+
     }
 
 
