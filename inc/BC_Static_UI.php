@@ -3,9 +3,9 @@
 /**
  * This class print UI elements that aren't dependent on any particular form (without creating a form instance)
  */
-namespace BinaryCarpenter\BC_CP;
+namespace BinaryCarpenter\BC_GA;
 
-class BC_Static_UI
+class Static_UI
 {
     /**
      * Echos an label element
@@ -23,6 +23,36 @@ class BC_Static_UI
             return $output;
     }
 
+    /**
+     * @param $content array of content, each element of this array represents a column
+     * array(
+            'content' => 'array of html content of the col',
+     *      'width' => 'width of the col'
+     * )
+     *
+     * @param $echo boolean, whether to echo or not
+     *
+     * @return void|string
+     */
+    public static function row($content, $echo = true)
+    {
+        $html = '';
+        foreach ($content as $col)
+        {
+            //if a width is specified, it should be in this format 1-2, 1-3, 1-4... or 1-2@m...
+            $width = isset($col['width']) ? $col['width'] : 'auto@m';
+
+            $width = 'bc-uk-width-'. $width;
+            $html .= sprintf('<div class="%1$s">%2$s</div>', $width, implode("", $col['content']));
+        }
+
+        $html = sprintf('<div bc-uk-grid>%1$s</div>', $html);
+
+        if ($echo)
+            echo $html;
+        else
+            return $html;
+    }
     /**
      * @param array $content array(array('title' => 'title', 'content' => array of string, 'is_active" => false, 'is_disabled' => false))
      * @param bool $echo echo or not
