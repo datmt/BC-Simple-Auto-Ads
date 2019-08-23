@@ -30,6 +30,7 @@ namespace BinaryCarpenter\PLUGIN_NS;
          *
          * Later, when getting the options back to edit, we can easily request the options that have OPTION_NAME_META_KEY
          * match  @bc_cart_menu_design
+         This constant can be shared between plugins (dont' need to change per plugin)
          */
         const OPTION_NAME_META_KEY = 'bc_option_name';
         private $post_id, $option_name;

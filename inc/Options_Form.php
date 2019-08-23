@@ -36,17 +36,24 @@ class Options_Form
         //update the $option_post_id in case the id passed in is 0, the BC_Options class will create a new post
         $this->option_post_id = $this->options->get_post_id();
     }
-
+    /**
+    * Return the naem of the ajax action. Used in setting_fields() to output ajax action
+    */
     public static function get_action_name()
     {
         return sprintf('%1$s', self::AJAX_SAVE_FORM);
     }
 
-
+    /**
+    * Return the id of current post
+    */
     public function get_option_post_id()
     {
         return $this->option_post_id;
     }
+    /**
+    * print necessary js code to handle form submit via ajax.
+    */
     public function js_post_form()
     { ?>
 
@@ -59,7 +66,7 @@ class Options_Form
                     $(window).bind('keydown', function(event) {
                         if (event.ctrlKey || event.metaKey) {
                             switch (String.fromCharCode(event.which).toLowerCase()) {
-                                case 's':
+                                case 's'://bind Ctrl+S to save/submit form
                                     event.preventDefault();
                                     //save all forms
                                     _.each($('.bc-form-submit-button'), function(the_button){
@@ -77,10 +84,17 @@ class Options_Form
                         e.preventDefault();
                         save_form($(this));
                     });
-
+                    /**
+                    * when clicking on this button, add one more row. This is for settings that
+                    * have value varied. For example the thank you page associate with categories 
+                    * in the thank you page plugin
+                    */
                     $(document).on('click', '.add-data-row', function(){
                         add_data_row($(this));
                     });
+                    /**
+                    * Same reason as above
+                    */
                     $(document).on('click', '.minus-data-row', function(){
                         remove_data_row($(this));
                     });
@@ -90,6 +104,7 @@ class Options_Form
                 * this function save form data via ajax
                 * form action value (ajax action) is defined by the 
                 * action field in form (printed by form_settings())
+                * @param the_button button that clicked
                 */
                 function save_form(the_button)
                 {
@@ -97,6 +112,7 @@ class Options_Form
 
 
                     _.each(the_button.closest('form').find('input, select, textarea'), function (i) {
+
                         let input = $(i);
                         let input_name = (input).attr('name');
                         let input_value = undefined;
@@ -112,14 +128,12 @@ class Options_Form
                         else
                             input_value = input.val();
 
-
                         if (typeof (input_value) !== 'undefined')
                             data[input_name] = input_value;
 
 
                     });
 
-                    console.log(data);
                     $.post(ajaxurl, data, function (response) {
 
                         swal('', response.message, 'info');
