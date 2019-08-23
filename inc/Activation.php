@@ -6,10 +6,8 @@
  *
  * Always put this in a subfolder of the plugin root
  */
-namespace BinaryCarpenter\BC_MNC;
-if (!class_exists('\BinaryCarpenter\BC_Activation_x18794'))
-{
-    class _Activation_
+namespace BinaryCarpenter\PLUGIN_NS;
+    class Activation
     {
 
         private static function is_activated($key_check_option)
@@ -149,4 +147,4 @@ if (!class_exists('\BinaryCarpenter\BC_Activation_x18794'))
         }
 
     }
-}
+

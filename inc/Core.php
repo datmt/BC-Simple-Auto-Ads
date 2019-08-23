@@ -6,8 +6,8 @@
  * Time: 9:42 AM
  */
 
-namespace BinaryCarpenter\BC_MNC;
-class BinaryCarpenterCore
+namespace BinaryCarpenter\PLUGIN_NS;
+class Core
 {
     const MENU_SLUG = 'bccomvn_wp_plugins_myn_menu';
     public function admin_menu()

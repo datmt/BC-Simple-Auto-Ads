@@ -6,26 +6,25 @@
  * Time: 10:10 AM
  */
 
-namespace BinaryCarpenter\BC_TK;
-use BinaryCarpenter\BC_TK\Config as Config;
+namespace BinaryCarpenter\PLUGIN_NS;
+use BinaryCarpenter\PLUGIN_NS\Config as Config;
 
 /**
  * Class BC_Options_Form
- * @package BinaryCarpenter\BC_TK
+ * @package BinaryCarpenter\PLUGIN_NS
  * This class, will be used across multiple BC plugins. They all share one common custom post type to store
  * plugins' settings
  *
  */
-class BC_Options_Form
+class Options_Form
 {
     private $option_name, $option_post_id;
     private $options;
-    const BC_OPTION_COMMON_AJAX_ACTION = 'bc_1378x_aj_action';
+    const AJAX_SAVE_FORM = 'bc_1378x_aj_action';//Used to store form settings, must be different across plugins
     const REDIRECT_URL = 'redirect_url';
 
 
     /**
-     * BC_Options_Form constructor.
      * @param $option_name
      */
     public function __construct($option_name, $option_post_id)
@@ -36,12 +35,12 @@ class BC_Options_Form
 
         //update the $option_post_id in case the id passed in is 0, the BC_Options class will create a new post
         $this->option_post_id = $this->options->get_post_id();
-
+        add_action('wp_ajax_'. self::AJAX_SAVE_FORM, array(__CLASS__, 'save_form_options')); 
     }
 
     public static function get_action_name()
     {
-        return sprintf('%1$s', self::BC_OPTION_COMMON_AJAX_ACTION);
+        return sprintf('%1$s', self::AJAX_SAVE_FORM);
     }
 
 
@@ -88,7 +87,11 @@ class BC_Options_Form
                     });
 
                 });
-
+                /**
+                * this function save form data via ajax
+                * form action value (ajax action) is defined by the 
+                * action field in form (printed by form_settings())
+                */
                 function save_form(the_button)
                 {
                     var data = {};
@@ -163,8 +166,13 @@ class BC_Options_Form
 
 
     }
+    /**
+    * This function handle form submit (save form data...)
+    * you need to add action and put this as the handler in the
+    * constructor of this class
+    */
 
-    public static function handle_post_save_options()
+    public static function save_form_options()
     {
         //save the option to the post ID
         if (!current_user_can('edit_posts')) {

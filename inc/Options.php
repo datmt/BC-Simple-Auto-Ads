@@ -8,7 +8,7 @@
  * class to manage options (options are stored in custom post meta)
  */
 
-namespace BinaryCarpenter;
+namespace BinaryCarpenter\PLUGIN_NS;
 
 /**
  * Class BC_Options
@@ -16,8 +16,7 @@ namespace BinaryCarpenter;
  *
  * This class is used to save options settings in key->value pair in custom post type meta
  */
-if (!class_exists('BC_Options')) {
-    class BC_Options
+    class Options
     {
         /**this is the post type for all plugins and possible themes created by BC
          * this is unchanged, the number is added to increase uniqueness
@@ -243,4 +242,3 @@ if (!class_exists('BC_Options')) {
                 update_post_meta($this->post_id, $key, serialize($value));
         }
     }
-}

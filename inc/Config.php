@@ -5,8 +5,8 @@
  * Date: 5/9/2019
  * Time: 8:57 AM
  */
-namespace BinaryCarpenter;
-class BC_Menu_Cart_Config
+namespace BinaryCarpenter\PLUGIN_NS;
+class Config;
 {
     const PLUGIN_NAME = 'BC Menu Bar Cart';
     const PLUGIN_MENU_NAME = 'BC Menu Cart';
