@@ -14,13 +14,12 @@ module.exports = function(grunt) {
                 src: [
                     'src/js/uikit.js',
                     'src/js/lightcase.js',
-                    'node_modules/sweetalert/dist/sweetalert.min.js',
+                    'src/js/sweetalert-dev.js',
                     'src/js/uikit-icon.js',
                     'src/js/backend.js',
                 ],
                 dest: 'bundle/js/backend-bundle.js'
             },
-            //
             frontend: {
                 src: [
                     'src/js/uikit.js',
