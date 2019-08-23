@@ -35,7 +35,6 @@ class Options_Form
 
         //update the $option_post_id in case the id passed in is 0, the BC_Options class will create a new post
         $this->option_post_id = $this->options->get_post_id();
-        add_action('wp_ajax_'. self::AJAX_SAVE_FORM, array(__CLASS__, 'save_form_options')); 
     }
 
     public static function get_action_name()
