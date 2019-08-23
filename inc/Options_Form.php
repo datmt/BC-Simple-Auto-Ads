@@ -110,8 +110,10 @@ class Options_Form
                 {
                     var data = {};
 
+                    //Collect data from fields that have keys (name), if the fields don't have keys, they are part of a
+                    //bigger field (such as key_select_select)
 
-                    _.each(the_button.closest('form').find('input, select, textarea'), function (i) {
+                    _.each(the_button.closest('form').find('input, select, textarea').not('.bc-no-key-field'), function (i) {
 
                         let input = $(i);
                         let input_name = (input).attr('name');
@@ -133,6 +135,24 @@ class Options_Form
 
 
                     });
+                    //save data from fields that aren't simple input, select but have multiple inputs, selects
+                    _.each(the_button.closest('form').find('.bc-key-array-assoc-data-field'), function(field){
+                        var data_rows = {};
+
+                        _.each($(field).find('.bc-single-data-row'), function(single_data_row){
+
+                            var data_key = $(single_data_row).find('.bc-single-data-value').eq(0).val();
+                            var data_value = $(single_data_row).find('.bc-single-data-value').eq(1).val();
+                            if (data_key !== '' )
+                                data_rows[data_key] = data_value;
+
+                        });
+
+                        //update the data of this field to the total data
+                        data[$(field).attr('data-name')] = data_rows;
+
+                    });
+
 
                     $.post(ajaxurl, data, function (response) {
 
@@ -470,7 +490,9 @@ class Options_Form
     }
 
 
-
+    /**
+    * Print single data row. Used in fields that have more than one inputs or selects (a key then value is an array of assocciated array)
+    */
     private static function flex_data_row(array $content, $equal_width = false, $display_add_row = false, $display_minus_row = false)
     {
         $html = '';
@@ -492,6 +514,9 @@ class Options_Form
     /**
      * print the select, without field name.
      * @param array $values_array must be an associative array
+     * This function print a select as a big field (that has key, which is the field name)
+     * One case is to have a key then two selects
+     * For example, select which category goes with which popup
      */
     private function raw_select($values_array, $selected_value, $multiple = false)
     {

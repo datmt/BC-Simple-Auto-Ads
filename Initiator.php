@@ -23,11 +23,12 @@ class Initiator {
 
      public function __construct()
      {
-
+        //register the action to handle options form submit
         add_action('wp_ajax_'. Options_Form::AJAX_SAVE_FORM, array('Options_Form', 'save_form_options')); 
 
-
+        //add menu, if not available
         add_action('admin_menu', array($this, 'add_to_menu'));
+
      }
 
 

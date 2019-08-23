@@ -12,6 +12,7 @@ class Static_UI
      *
      * @param $field_id
      * @param string $text
+     *
      * @return string
      */
     public static function label($field_id, $text, $echo = true)
@@ -24,11 +25,13 @@ class Static_UI
     }
 
     /**
+     * Create a row
+     *
      * @param $content array of content, each element of this array represents a column
      * array(
-            'content' => 'array of html content of the col',
-     *      'width' => 'width of the col'
-     * )
+     *       'content' => 'array of html content of the col',
+     *       'width' => 'width of the col'
+     *      )
      *
      * @param $echo boolean, whether to echo or not
      *
@@ -54,6 +57,8 @@ class Static_UI
             return $html;
     }
     /**
+     * Create tabs
+     * 
      * @param array $content array(array('title' => 'title', 'content' => array of string, 'is_active" => false, 'is_disabled' => false))
      * @param bool $echo echo or not
      *
@@ -68,7 +73,16 @@ class Static_UI
         {
             $active_class = isset($item['is_active']) && $item['is_active']? 'bc-uk-active' : '';
             $disabled_class = isset($item['is_disabled']) && $item['is_disabled']? 'bc-uk-disabled' : '';
-            $tab_head .= sprintf('<li class="%1$s %2$s" ><a href="#">%3$s</a></li>', $disabled_class, $active_class, $item['title']);
+
+            /**
+            * generate a random tab ID for each tab. Along with bc-single-tab (below), this will be used to select
+            * the correct tab after form saved and redirected
+            *
+            * @var $random_id
+            */
+            $random_id = 'bc-tab-' . rand(1,20000);
+            //add the class bc-single-tab here. It will be used to redirect and select the tab later when form is saved (function save_form in Options_Form.php)
+            $tab_head .= sprintf('<li class="%1$s %2$s bc-single-tab" id="%4$s" ><a href="#">%3$s</a></li>', $disabled_class, $active_class, $item['title'], $random_id);
 
             $tab_body .= sprintf('<li>%1$s</li>', implode("", $item['content']));
         }
@@ -88,6 +102,8 @@ class Static_UI
 
 
     /**
+     * Create heading
+     *
      * @param string $content HTML content of the heading, usually just text
      * @param int $level heading level, similar to h1 to h6 but with smaller text. There are only three levels
      * with text size 38px, 24px and 18px
@@ -110,13 +126,15 @@ class Static_UI
 
 
     /**
+     * Create a notice
+     * 
      * @param string $content html content
      * @param string $type [error|info|warning|success]
      * @param bool $closable
      * @param bool $echo
+     * 
      * @return string
      */
-
     public static function notice($content, $type, $closable = false, $echo = true)
     {
 
@@ -154,7 +172,14 @@ class Static_UI
             return $output;
 
     }
-
+    /**
+    * Create a flex section with content. Content is an array of HTML
+    *
+    * @param array $content: array of HTML
+    * @param string $flex_class: css class, from UI kit
+    *
+    * @return string HTML 
+    */
     public static function flex_section($content, $flex_class = 'bc-uk-flex-left')
     {
         $html = sprintf('<div class="bc-uk-flex %1$s">', $flex_class);
