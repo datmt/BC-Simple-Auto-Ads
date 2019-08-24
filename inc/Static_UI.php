@@ -25,6 +25,34 @@ class Static_UI
     }
 
     /**
+    * Print opening root div (bc-root)
+    *
+    */
+    public static function open_root($echo = true)
+    {
+
+        $html = '<div class="bc-root bc-doc"> <!-- opening bc-root -->';
+        if ($echo)
+            echo $html;
+        else 
+            return $html;
+    }
+
+    /**
+    * Print closing root div (bc-root)
+    *
+    */
+    public static function close_root($echo = true)
+    {
+        $html = '</div> <!-- closing bc-root -->';
+        if ($echo)
+            echo $html;
+        else 
+            return $html;
+    }
+  
+
+    /**
      * Create a row
      *
      * @param $content array of content, each element of this array represents a column
