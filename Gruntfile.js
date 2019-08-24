@@ -28,11 +28,25 @@ module.exports = function(grunt) {
                 dest: 'bundle/js/frontend-bundle.js'
             },
         },
+        uglify: {
+            options: {
+                compress: true,
+                mangle: true,
+                sourceMap: true
+            },
+            dist: {
+                files: {
+                    'bundle/js/frontend-bundle.min.js': 'bundle/js/frontend-bundle.js',
+                    'bundle/js/backend-bundle.min.js': 'bundle/js/backend-bundle.js',
+
+                }
+            }
+        },
 
         watch: {
             concat_js: {
                 files: ['src/js/*.js'],
-                tasks: ['concat']
+                tasks: ['concat', 'uglify']
             },
         },
     });
@@ -42,6 +56,7 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-uglify-es');
     grunt.registerTask('default');
 
 };
