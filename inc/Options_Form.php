@@ -31,7 +31,7 @@ class Options_Form
     {
         $this->option_name = $option_name;
         $this->option_post_id = $option_post_id;
-        $this->options = new BC_Options($this->option_name, $option_post_id);
+        $this->options = new Options($this->option_name, $option_post_id);
 
         //update the $option_post_id in case the id passed in is 0, the BC_Options class will create a new post
         $this->option_post_id = $this->options->get_post_id();
