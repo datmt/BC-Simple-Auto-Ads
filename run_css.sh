@@ -1,8 +1,8 @@
 #!/bin/bash
 
 current_path=$(pwd)
-front_scss="/bundle/css/bc-uatc-front.scss"
-front_css="/bundle/css/bc-uatc-front.css"
+front_scss="/bundle/css/frontend.scss"
+front_css="/bundle/css/frontend.css"
 back_scss="/bundle/css/backend.scss"
 back_css="/bundle/css/backend.css"
 compile_front="$current_path$front_scss:$current_path$front_css"
