@@ -15,9 +15,17 @@
 namespace BinaryCarpenter\PLUGIN_NS;
 
 include_once 'inc/Options_Form.php';
+include_once 'inc/Options.php';
+include_once 'inc/Static_UI.php';
 include_once 'inc/Core.php';
+include_once 'inc/Config.php';
+include_once 'ui/Main.php';
+include_once 'vendor/autoload.php';
 use BinaryCarpenter\PLUGIN_NS\Options_Form;
+use BinaryCarpenter\PLUGIN_NS\Options;
 use BinaryCarpenter\PLUGIN_NS\Core as Core;
+use BinaryCarpenter\PLUGIN_NS\Config as Config;
+use BinaryCarpenter\PLUGIN_NS\UI\Main as Main;
 class Initiator {
 
 
@@ -36,7 +44,20 @@ class Initiator {
     {
         (new Core())->admin_menu();
         //add sub menu page here
+        $menu_title = '' . Config::MENU_NAME;//html content, with icon
+        add_submenu_page(
+                Core::MENU_SLUG,
+                Config::NAME,
+                $menu_title,
+                'edit_posts',
+                Config::SLUG,
+                array($this, 'plugin_ui'));
 
+    }
+
+    public function plugin_ui()
+    {
+        Main::ui();
     }
 }
 
