@@ -452,9 +452,11 @@ class Options_Form
 
     /**
      * Generate a section where one key is associated with an associative array
-     * _key => array(
-        'key' => 'value'
-     * )
+     * Keys and Values are in two select fields, side by side
+     *
+     *    _key => array(
+     *       'key' => 'value'
+     *     )
      */
     public function key_select_select(
             $setting_field_name,
@@ -512,11 +514,12 @@ class Options_Form
     }
 
     /**
-     * print the select, without field name.
-     * @param array $values_array must be an associative array
+     * Print the select, without field name.
      * This function print a select as a big field (that has key, which is the field name)
      * One case is to have a key then two selects
      * For example, select which category goes with which popup
+     *
+     * @param array $values_array must be an associative array
      */
     private function raw_select($values_array, $selected_value, $multiple = false)
     {
@@ -571,6 +574,8 @@ class Options_Form
     }
 
     /**
+     * Print out headings 
+     *
      * @param string $content HTML content of the heading, usually just text
      * @param int $level heading level, similar to h1 to h6 but with smaller text. There are only three levels
      * with text size 38px, 24px and 18px
@@ -580,7 +585,6 @@ class Options_Form
      */
     public function heading($content, $level = 1, $echo = true)
     {
-
         $output = sprintf('<div class="bc-doc-heading-%1$s">%2$s</div>', $level, $content);
 
         if ($echo)
@@ -594,19 +598,19 @@ class Options_Form
     /**
      * Echos a group of radio elements
      * values: value => label pair or
-     *  value => array(label, disabled, postfix)
+     * value => array(label, disabled, postfix)
+     *
      * @param $setting_field_name
      * @param $values
      * @param string $layout
      * @param $label_type string either: text (normal text), image(image url), icon_font (icon class)
      * @param string $title
      * @param array $dimensions width and height of image or icon, default 16 x 16
+     *
      * @return string
      */
     public function radio($setting_field_name, $values, $layout = 'row', $label_type = 'text', $title = '', $dimensions = array(16, 16))
     {
-
-
         $current_value = $this->get_option_value($setting_field_name);
 
         $html = '';
@@ -621,24 +625,23 @@ class Options_Form
             $disabled = $label_array['disabled'] ? 'disabled' : '';
             $label_content = $label_array['content'];
 
-
             $radio = sprintf('<input class="bc-uk-radio" type="radio" name="%1$s" value="%2$s" %3$s %4$s/> ', $this->generate_form_field($setting_field_name), $v, $checked, $disabled);
 
             switch ($label_type) {
                 case 'text':
-
                     $top_row[] = sprintf('<span>%1$s %2$s&nbsp;&nbsp;</span>', $radio, $label_content);
-
                     break;
-                case 'image':
 
+                case 'image':
                     $top_row[] = sprintf('<a href="%1$s" data-rel="lightcase"><img style="width: %2$s; height: %3$s; margin: auto;" src="%1$s" /></a>', $label_content, $dimensions[0] > 0 ? $dimensions[0] . 'px' : '', $dimensions[1] > 0 ? $dimensions[1] . 'px' : '');
                     $bottom_row[] = $radio;
                     break;
+
                 case 'icon_font':
                     $top_row[] = sprintf('<i class="%1$s"></i>', $label_content);
                     $bottom_row[] = $radio;
                     break;
+
                 default:
                     $top_row[] = sprintf('<p>%1$s</p>', $label_content);
                     break;
