@@ -2,4 +2,6 @@ vendor/
 node_modules/
 *.map
 *.swp
+bundle/css/*.css
+bundle/js/*.js
 
