@@ -36,9 +36,41 @@ class Initiator {
 
         //add menu, if not available
         add_action('admin_menu', array($this, 'add_to_menu'));
+        
+
+        //enqueue js and css
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_front'));
 
      }
+    /**
+    * Register and enqueue frontend styles and scripts
+    *
+    *
+    */
+    public function enqueue_front()
+    {
+        wp_register_style(Config::SLUG . '-frontend-style', plugins_url('bundle/css/frontend.css', __FILE__));
+        
+        wp_enqueue_style(Config::SLUG . '-frontend-style');
 
+        wp_register_script(Config::SLUG . '-frontend-script', plugins_url('bundle/js/frontend-bundle.js', __FILE__));
+
+        wp_enqueue_script(Config::SLUG . '-frontend-script');
+    }
+
+
+    public function enqueue_admin()
+    {
+        wp_register_style(Config::SLUG . '-backend-style', plugins_url('bundle/css/backend.css', __FILE__));    
+        
+        wp_enqueue_style(Config::SLUG . '-backend-style');
+
+        wp_register_script(Config::SLUG . '-backend-script', plugins_url('bundle/js/backend-bundle.js', __FILE__));
+
+        wp_enqueue_script(Config::SLUG . '-backend-script');
+
+    }
 
     public function add_to_menu()
     {
