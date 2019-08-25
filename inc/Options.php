@@ -48,7 +48,7 @@ namespace BinaryCarpenter\PLUGIN_NS;
         {
             //check if custom post type exists and init it if wasn't
             $this->init_post_type();
-
+            $this->option_name = $option_name;
 
             //if $post_id == 0, create a new post and set OPTION_NAME_META_KEY = $option_name
             if ($post_id == 0) {
@@ -56,11 +56,14 @@ namespace BinaryCarpenter\PLUGIN_NS;
                     'post_title' => '',
                     'post_type' => self::OPTION_POST_TYPE_NAME,
                     'post_status' => 'publish',
-                    'post_content' => ''
+                    'post_content' => '',
+	                'meta_input' => array(
+	                	self::OPTION_NAME_META_KEY => $option_name
+	                )
                 )));
             }
             $this->post_id = $post_id;
-            $this->option_name = $option_name;
+            
         }
 
         /**
