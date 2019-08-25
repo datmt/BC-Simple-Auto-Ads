@@ -90,6 +90,24 @@ namespace BinaryCarpenter\PLUGIN_NS;
 
             return new \WP_Query($args);
         }
+        
+        
+        /**
+	     * For settings that have only one option for the whole life of the plugin, this function
+	     * pull the only option out.
+	     *
+	     * @param $option_name string name of the option
+	     *
+	     * @return int
+	     */
+        public static function get_the_only_option_id($option_name)
+        {
+        	$all_options = self::get_all_options($option_name);
+        	if ($all_options->have_posts())
+        		return $all_options->posts[0]->ID;
+        	return 0;
+
+        }
 
 
         private function init_post_type()
