@@ -259,13 +259,25 @@ class Options_Form
 
     /**
      * output nonce, action ...
+     *
+     * @param $echo boolean return or echo HTML directly to screen
+     *
+     * @return void|string
      */
-    public function setting_fields()
+    public function setting_fields($echo = true)
     {
-        echo sprintf('<input type="hidden" name="action" value="%1$s" />', $this->get_action_name());
-        echo sprintf('<input type="hidden" name="option_post_id" value="%1$s" />', $this->option_post_id);
-        echo sprintf('<input type="hidden" name="option_name" value="%1$s" />', $this->option_name);
-        wp_nonce_field($this->get_action_name(), "bc_form_security");
+    	$html = '';
+
+        $html .= sprintf('<input type="hidden" name="action" value="%1$s" />', $this->get_action_name());
+	    $html .= sprintf('<input type="hidden" name="option_post_id" value="%1$s" />', $this->option_post_id);
+	    $html .= sprintf('<input type="hidden" name="option_name" value="%1$s" />', $this->option_name);
+        $html .= wp_nonce_field($this->get_action_name(), "bc_form_security");
+
+        if ($echo)
+        	echo $html;
+        else
+        	return $html;
+
     }
 
 
