@@ -25,6 +25,30 @@ class Static_UI
     }
 
     /**
+    * Open a form tag
+    *
+    *
+    */
+    public static function open_form($echo = true)
+    {
+        $html = '<form class="bc-single-form">';
+        if ($echo)
+            echo $html;
+        else
+            return $html;
+    }
+    
+    /**
+     * Close an open form
+     */
+    public static function close_form($echo = true)
+    {
+        if ($echo)
+            echo '</form>';
+        else
+            return '</form>';
+    }
+    /**
     * Print opening root div (bc-root)
     *
     */
@@ -218,8 +242,156 @@ class Static_UI
         return $html . '</div>';
     }
 
+    /**
+    * print necessary js code to handle form submit via ajax.
+    */
+    public function js_post_form()
+    { ?>
 
+        <script>
+
+            (function ($) {
+
+                $(function () {
+                    //save the settings on key press
+                    $(window).bind('keydown', function(event) {
+                        if (event.ctrlKey || event.metaKey) {
+                            switch (String.fromCharCode(event.which).toLowerCase()) {
+                                case 's'://bind Ctrl+S to save/submit form
+                                    event.preventDefault();
+                                    //save all forms
+                                    _.each($('.bc-form-submit-button'), function(the_button){
+                                        save_form($(the_button));
+                                    });
+
+                                    break;
+
+                            }
+                        }
+                    });
+
+
+                    $('.bc-form-submit-button').on('click', function (e) {
+                        e.preventDefault();
+                        save_form($(this));
+                    });
+                    /**
+                    * when clicking on this button, add one more row. This is for settings that
+                    * have value varied. For example the thank you page associate with categories 
+                    * in the thank you page plugin
+                    */
+                    $(document).on('click', '.add-data-row', function(){
+                        add_data_row($(this));
+                    });
+                    /**
+                    * Same reason as above
+                    */
+                    $(document).on('click', '.minus-data-row', function(){
+                        remove_data_row($(this));
+                    });
+
+                });
+                /**
+                * this function save form data via ajax
+                * form action value (ajax action) is defined by the 
+                * action field in form (printed by form_settings())
+                * @param the_button button that clicked
+                */
+                function save_form(the_button)
+                {
+                    var data = {};
+
+                    //Collect data from fields that have keys (name), if the fields don't have keys, they are part of a
+                    //bigger field (such as key_select_select)
+
+                    _.each(the_button.closest('form').find('input, select, textarea').not('.bc-no-key-field'), function (i) {
+
+                        let input = $(i);
+                        let input_name = (input).attr('name');
+                        let input_value = undefined;
+
+                        //for checkbox, get value of the checked one
+                        if (input.attr('type') === 'checkbox')
+                            input_value = input.is(":checked");
+                        else if (input.attr('type') === 'radio') {
+                            //for radio input, since there are many radios share the same name, only get the value of checked radio
+                            if (input.is(':checked'))
+                                input_value = input.val();
+                        }
+                        else
+                            input_value = input.val();
+
+                        if (typeof (input_value) !== 'undefined')
+                            data[input_name] = input_value;
+
+
+                    });
+                    //save data from fields that aren't simple input, select but have multiple inputs, selects
+                    _.each(the_button.closest('form').find('.bc-key-array-assoc-data-field'), function(field){
+                        var data_rows = {};
+
+                        _.each($(field).find('.bc-single-data-row'), function(single_data_row){
+
+                            var data_key = $(single_data_row).find('.bc-single-data-value').eq(0).val();
+                            var data_value = $(single_data_row).find('.bc-single-data-value').eq(1).val();
+                            if (data_key !== '' )
+                                data_rows[data_key] = data_value;
+
+                        });
+
+                        //update the data of this field to the total data
+                        data[$(field).attr('data-name')] = data_rows;
+
+                    });
+
+
+                    $.post(ajaxurl, data, function (response) {
+
+                        swal('', response.message, 'info');
+                        if (typeof (response.redirect_url) !== 'undefined')
+                        {
+                            var current_tab = the_button.closest('.bc-single-tab').attr('id');
+                            window.location.href = response.redirect_url + '&active_tab='+ current_tab;
+                        }
+
+                    });
+                }
+
+                //add one more data ro
+                function add_data_row(add_button)
+                {
+                    //clone current row
+                    var clone = add_button.closest('.bc-single-data-row').clone();
+                    add_button.closest('.bc-data-field').append(clone);
+
+                }
+
+                function remove_data_row(remove_button)
+                {
+                    var current_row = remove_button.closest('.bc-single-data-row');
+                    //don't remove if it's the last row
+                    var data_field = remove_button.closest('.bc-data-field');
+
+                    if (data_field.find('.bc-single-data-row').length <=1)
+                        return;
+
+                    current_row.remove();
+
+
+                }
+
+
+            })(jQuery);
+
+        </script>
+
+
+        <?php
+
+
+    }
 
 
 
 }
+
