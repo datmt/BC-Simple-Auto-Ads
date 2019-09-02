@@ -20,7 +20,7 @@ class Options_Form
 {
     private $option_name, $option_post_id;
     private $options;
-    const AJAX_SAVE_FORM = 'bc_1378x_aj_action';//Used to store form settings, must be different across plugins
+    const AJAX_SAVE_FORM = 'bc_ultimate_checkout_ajax';//Used to store form settings, must be different across plugins
     const REDIRECT_URL = 'redirect_url';
 
 
@@ -51,154 +51,20 @@ class Options_Form
     {
         return $this->option_post_id;
     }
-    /**
-    * print necessary js code to handle form submit via ajax.
-    */
-    public function js_post_form()
-    { ?>
-
-        <script>
-
-            (function ($) {
-
-                $(function () {
-                    //save the settings on key press
-                    $(window).bind('keydown', function(event) {
-                        if (event.ctrlKey || event.metaKey) {
-                            switch (String.fromCharCode(event.which).toLowerCase()) {
-                                case 's'://bind Ctrl+S to save/submit form
-                                    event.preventDefault();
-                                    //save all forms
-                                    _.each($('.bc-form-submit-button'), function(the_button){
-                                        save_form($(the_button));
-                                    });
-
-                                    break;
-
-                            }
-                        }
-                    });
 
 
-                    $('.bc-form-submit-button').on('click', function (e) {
-                        e.preventDefault();
-                        save_form($(this));
-                    });
-                    /**
-                    * when clicking on this button, add one more row. This is for settings that
-                    * have value varied. For example the thank you page associate with categories 
-                    * in the thank you page plugin
-                    */
-                    $(document).on('click', '.add-data-row', function(){
-                        add_data_row($(this));
-                    });
-                    /**
-                    * Same reason as above
-                    */
-                    $(document).on('click', '.minus-data-row', function(){
-                        remove_data_row($(this));
-                    });
-
-                });
-                /**
-                * this function save form data via ajax
-                * form action value (ajax action) is defined by the 
-                * action field in form (printed by form_settings())
-                * @param the_button button that clicked
-                */
-                function save_form(the_button)
-                {
-                    var data = {};
-
-                    //Collect data from fields that have keys (name), if the fields don't have keys, they are part of a
-                    //bigger field (such as key_select_select)
-
-                    _.each(the_button.closest('form').find('input, select, textarea').not('.bc-no-key-field'), function (i) {
-
-                        let input = $(i);
-                        let input_name = (input).attr('name');
-                        let input_value = undefined;
-
-                        //for checkbox, get value of the checked one
-                        if (input.attr('type') === 'checkbox')
-                            input_value = input.is(":checked");
-                        else if (input.attr('type') === 'radio') {
-                            //for radio input, since there are many radios share the same name, only get the value of checked radio
-                            if (input.is(':checked'))
-                                input_value = input.val();
-                        }
-                        else
-                            input_value = input.val();
-
-                        if (typeof (input_value) !== 'undefined')
-                            data[input_name] = input_value;
-
-
-                    });
-                    //save data from fields that aren't simple input, select but have multiple inputs, selects
-                    _.each(the_button.closest('form').find('.bc-key-array-assoc-data-field'), function(field){
-                        var data_rows = {};
-
-                        _.each($(field).find('.bc-single-data-row'), function(single_data_row){
-
-                            var data_key = $(single_data_row).find('.bc-single-data-value').eq(0).val();
-                            var data_value = $(single_data_row).find('.bc-single-data-value').eq(1).val();
-                            if (data_key !== '' )
-                                data_rows[data_key] = data_value;
-
-                        });
-
-                        //update the data of this field to the total data
-                        data[$(field).attr('data-name')] = data_rows;
-
-                    });
-
-
-                    $.post(ajaxurl, data, function (response) {
-
-                        swal('', response.message, 'info');
-                        if (typeof (response.redirect_url) !== 'undefined')
-                        {
-                            var current_tab = the_button.closest('.bc-single-tab').attr('id');
-                            window.location.href = response.redirect_url + '&active_tab='+ current_tab;
-                        }
-
-                    });
-                }
-
-                //add one more data ro
-                function add_data_row(add_button)
-                {
-                    //clone current row
-                    var clone = add_button.closest('.bc-single-data-row').clone();
-                    add_button.closest('.bc-data-field').append(clone);
-
-                }
-
-                function remove_data_row(remove_button)
-                {
-                    var current_row = remove_button.closest('.bc-single-data-row');
-                    //don't remove if it's the last row
-                    var data_field = remove_button.closest('.bc-data-field');
-
-                    if (data_field.find('.bc-single-data-row').length <=1)
-                        return;
-
-                    current_row.remove();
-
-
-                }
-
-
-            })(jQuery);
-
-        </script>
-
-
-        <?php
-
+	/**
+	 * Print an input field then multiple other fields that associated to that input field
+	 *
+	 * @param $setting_field_name string name of the field
+	 * @param $child_fields array
+	 * @param $echo boolean return or echo HTML
+	 */
+    public function input_multiple($setting_field_name, $child_fields, $echo = true)
+    {
 
     }
+
     /**
     * This function handle form submit (save form data...)
     * you need to add action and put this as the handler in the
@@ -209,7 +75,7 @@ class Options_Form
     {
         //save the option to the post ID
         if (!current_user_can('edit_posts')) {
-            echo __('You have no right to perform this action.', Config::PLUGIN_TEXT_DOMAIN);
+            echo __('You have no right to perform this action.', Config::TEXT_DOMAIN);
             die();
         }
 
@@ -752,10 +618,14 @@ class Options_Form
             return '<hr class="bc-uk-hr" />';
     }
 
-    public function submit_button($text)
+    public function submit_button($text, $echo = true)
     {
 
-        echo sprintf('<button name="submit"  type="submit" class="bc-uk-button-primary bc-uk-button bc-form-submit-button" >%1$s</button>', $text);
+        $html =  sprintf('<button name="submit"  type="submit" class="bc-uk-button-primary bc-uk-button bc-form-submit-button" >%1$s</button>', $text);
+        if ($echo)
+            echo $html;
+        else
+            return $html;
     }
 
 }
