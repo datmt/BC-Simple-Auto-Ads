@@ -48,7 +48,6 @@ namespace BinaryCarpenter\PLUGIN_NS;
         {
             //check if custom post type exists and init it if wasn't
             $this->init_post_type();
-            $this->option_name = $option_name;
 
             //if $post_id == 0, create a new post and set OPTION_NAME_META_KEY = $option_name
             if ($post_id == 0) {
@@ -63,7 +62,7 @@ namespace BinaryCarpenter\PLUGIN_NS;
                 )));
             }
             $this->post_id = $post_id;
-            
+            $this->option_name = $option_name;
         }
 
         /**
@@ -93,9 +92,8 @@ namespace BinaryCarpenter\PLUGIN_NS;
 
             return new \WP_Query($args);
         }
-        
-        
-        /**
+
+	    /**
 	     * For settings that have only one option for the whole life of the plugin, this function
 	     * pull the only option out.
 	     *
@@ -111,7 +109,6 @@ namespace BinaryCarpenter\PLUGIN_NS;
         	return 0;
 
         }
-
 
         private function init_post_type()
         {
