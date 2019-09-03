@@ -10,7 +10,7 @@ namespace BinaryCarpenter\PLUGIN_NS;
 use BinaryCarpenter\PLUGIN_NS\Config as Config;
 
 /**
- * Class BC_Options_Form
+ * Class Options_Form
  * @package BinaryCarpenter\PLUGIN_NS
  * This class, will be used across multiple BC plugins. They all share one common custom post type to store
  * plugins' settings
@@ -33,7 +33,7 @@ class Options_Form
         $this->option_post_id = $option_post_id;
         $this->options = new Options($this->option_name, $option_post_id);
 
-        //update the $option_post_id in case the id passed in is 0, the BC_Options class will create a new post
+        //update the $option_post_id in case the id passed in is 0, the Options class will create a new post
         $this->option_post_id = $this->options->get_post_id();
     }
     /**
@@ -91,7 +91,7 @@ class Options_Form
 
         $option_name = sanitize_text_field($_POST['option_name']);
         $option_post_id = intval($_POST['option_post_id']);
-        $option_object = new BC_Options($option_name, $option_post_id);
+        $option_object = new Options($option_name, $option_post_id);
         //save the settings
         foreach ($_POST[$option_name] as $key => $value) {
             $option_object->set($key, $value);
@@ -562,19 +562,26 @@ class Options_Form
 
 
     /**
-     * Echos an input text element
-     *
-     * @param $setting_field_name
-     * @param string $placeholder
-     * @param bool $disabled
-     */
-    public function textarea($setting_field_name, $placeholder = '', $disabled = false)
+	 * Echos an input text element
+	 *
+	 * @param $setting_field_name
+	 * @param string $placeholder
+	 * @param bool $disabled
+	 *
+	 * @return void|string
+	 */
+    public function textarea($setting_field_name, $placeholder = '', $disabled = false, $echo = true)
     {
 
         $current_value = $this->get_option_value($setting_field_name);
 
         $disabled = $disabled ? 'disabled' : '';
-        echo sprintf('<textarea name="%1$s" placeholder="%4$s" class="bc-uk-textarea"  %3$s>%2$s</textarea>', $this->generate_form_field($setting_field_name), $current_value, $disabled, $placeholder);
+        $html = sprintf('<textarea name="%1$s" placeholder="%4$s" class="bc-uk-textarea"  %3$s>%2$s</textarea>', $this->generate_form_field($setting_field_name), $current_value, $disabled, $placeholder);
+
+        if ($echo)
+        	echo $html;
+        else
+        	return $html;
     }
 
 
