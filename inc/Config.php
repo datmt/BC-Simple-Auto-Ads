@@ -8,6 +8,10 @@
 namespace BinaryCarpenter\PLUGIN_NS;
 class Config
 {
+	/**
+	 * option name to save setting for this plugin (for plugin that only need one custom post to store all settings)
+	 */
+	const OPTION_NAME = 'starter_option_name';
     const NAME = 'Starter plugin';
     const MENU_NAME = 'Starter plugin';
     const SLUG = 'starter_plugin';

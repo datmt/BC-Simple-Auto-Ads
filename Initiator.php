@@ -20,7 +20,7 @@ include_once 'inc/Static_UI.php';
 include_once 'inc/Core.php';
 include_once 'inc/Config.php';
 include_once 'ui/Main.php';
-include_once 'vendor/autoload.php';
+//include_once 'vendor/autoload.php';
 use BinaryCarpenter\PLUGIN_NS\Options_Form;
 use BinaryCarpenter\PLUGIN_NS\Options;
 use BinaryCarpenter\PLUGIN_NS\Core as Core;
@@ -32,7 +32,7 @@ class Initiator {
      public function __construct()
      {
         //register the action to handle options form submit
-        add_action('wp_ajax_'. Options_Form::AJAX_SAVE_FORM, array('Options_Form', 'save_form_options')); 
+        add_action('wp_ajax_'. Options_Form::AJAX_SAVE_FORM, array('BinaryCarpenter\PLUGIN_NS\Options_Form', 'save_form_options'));
 
         //add menu, if not available
         add_action('admin_menu', array($this, 'add_to_menu'));
@@ -62,13 +62,22 @@ class Initiator {
 
     public function enqueue_admin()
     {
-        wp_register_style(Config::SLUG . '-backend-style', plugins_url('bundle/css/backend.css', __FILE__));    
-        
-        wp_enqueue_style(Config::SLUG . '-backend-style');
 
-        wp_register_script(Config::SLUG . '-backend-script', plugins_url('bundle/js/backend-bundle.js', __FILE__));
 
-        wp_enqueue_script(Config::SLUG . '-backend-script');
+    	$current_screen = get_current_screen();
+
+
+    	if (stripos($current_screen->base, Config::SLUG))
+	    {
+		    wp_register_style(Config::SLUG . '-backend-style', plugins_url('bundle/css/backend.css', __FILE__));
+
+		    wp_enqueue_style(Config::SLUG . '-backend-style');
+
+		    wp_register_script(Config::SLUG . '-backend-script', plugins_url('bundle/js/backend-bundle.js', __FILE__));
+
+		    wp_enqueue_script(Config::SLUG . '-backend-script');
+	    }
+
 
     }
 

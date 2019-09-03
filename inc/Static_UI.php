@@ -1,4 +1,9 @@
+<?php
 
+/**
+ * This class print UI elements that aren't dependent on any particular form (without creating a form instance)
+ */
+namespace BinaryCarpenter\PLUGIN_NS;
 class Static_UI
 {
     /**

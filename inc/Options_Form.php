@@ -289,9 +289,9 @@ class Options_Form
      * @param $setting_field_name
      * @param string $type
      * @param bool $disabled
-     * @return string
+     * @return string|void
      */
-    public function input_field($setting_field_name, $type = 'text', $label = '', $disabled = false, $width = 200)
+    public function input_field($setting_field_name, $type = 'text', $label = '', $disabled = false, $width = 200, $echo = true)
     {
 
         $current_value = $this->get_option_value($setting_field_name);
@@ -303,7 +303,10 @@ class Options_Form
         $html .= sprintf('<input class="bc-uk-input" type="%1$s" id="%2$s" name="%2$s" value="%3$s" %4$s style="width: %5$s;"/>', $type, $this->generate_form_field($setting_field_name), $current_value, $disabled, $width . 'px');
         $html .= '&nbsp;&nbsp;</div>';
 
-        return $html;
+        if ($echo)
+        	echo $html;
+        else
+            return $html;
 
     }
 

@@ -4,8 +4,12 @@
 * Main ui for the plugin
 */
 namespace BinaryCarpenter\PLUGIN_NS\UI;
+
 use BinaryCarpenter\PLUGIN_NS\Static_UI as UI;
 use BinaryCarpenter\PLUGIN_NS\Options_Form as Form;
+use BinaryCarpenter\PLUGIN_NS\Options;
+use BinaryCarpenter\PLUGIN_NS\Option_Names as Oname;
+use BinaryCarpenter\PLUGIN_NS\Config;
 class Main
 {
     public static function ui()
@@ -19,8 +23,8 @@ class Main
             UI::open_form(true);
                 UI::heading('Sample form', 2, true);
                 UI::label('', 'Sample label', true);
-			    $option_ui->textarea(Oname::EXCLUDED_POSTS, 'sample textarea', false, true);
 
+                $option_ui->input_field('sample_input_field');
 
 				$option_ui->setting_fields(true);
 
