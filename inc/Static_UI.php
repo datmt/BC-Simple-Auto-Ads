@@ -1,9 +1,3 @@
-<?php
-
-/**
- * This class print UI elements that aren't dependent on any particular form (without creating a form instance)
- */
-namespace BinaryCarpenter\PLUGIN_NS;
 
 class Static_UI
 {
@@ -242,10 +236,37 @@ class Static_UI
         return $html . '</div>';
     }
 
+
+	/**
+	 * @param $content_li array list of item (li)
+     * @param $is_wrapped boolean is the items are wrapped in <li> or not
+     * @param $echo boolean echo or return
+     *
+     * @return void|string
+	 */
+    public static function ul($content_li, $is_wrapped, $echo = true)
+    {
+        $html = '';
+       foreach ($content_li as $li)
+       {
+           if ($is_wrapped)
+               $html .= $li;
+           else
+               $html .= sprintf('<li>%1$s</li>', $li);
+       }
+
+       $html = sprintf('<ul>%1$s</ul>', $html);
+
+       if ($echo)
+           echo $html;
+       else
+           return $html;
+    }
+
     /**
     * print necessary js code to handle form submit via ajax.
     */
-    public function js_post_form()
+    public static function js_post_form()
     { ?>
 
         <script>
