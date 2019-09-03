@@ -10,26 +10,23 @@ class Main
 {
     public static function ui()
     {
-        $first_tab = array(
-            'title' => 'First tab',
-            'content' => array(
-                'first row'
-                ),
-             'is_active' => false,
-             'is_disabled' => false
-             );
-        $second_tab = array(
-            'title' => 'Second tab',
-            'content' => array(
-                'first row'
-                ),
-             'is_active' => true,
-             'is_disabled' => false
-             );
+
+    	$id = Options::get_the_only_option_id(Config::OPTION_NAME);
+		$option_ui = new Form(Config::OPTION_NAME, $id);
+
 
         UI::open_root();
-//        $form = new Form('test_option', 0);
-        UI::tabs(array($first_tab, $second_tab), true);
+            UI::open_form(true);
+                UI::heading('Sample form', 2, true);
+                UI::label('', 'Sample label', true);
+			    $option_ui->textarea(Oname::EXCLUDED_POSTS, 'sample textarea', false, true);
+
+
+				$option_ui->setting_fields(true);
+
+				UI::js_post_form();
+				$option_ui->submit_button('Save settings');
+            UI::close_form(true);
         UI::close_root();
     }
 
