@@ -8,7 +8,7 @@
  * class to manage options (options are stored in custom post meta)
  */
 
-namespace BinaryCarpenter\PLUGIN_NS;
+namespace BinaryCarpenter\BC_AA;
 
 /**
  * Class BC_Options
@@ -110,6 +110,22 @@ namespace BinaryCarpenter\PLUGIN_NS;
 
         }
 
+
+	    /**
+	     * @param $option_name
+	     *
+	     * @return Options|null
+	     */
+        public static function get_the_only_option($option_name)
+        {
+        	$id = self::get_the_only_option_id($option_name);
+
+        	if ($id == 0)
+        		return null;
+
+        	return new Options($option_name, $id);
+        }
+
         private function init_post_type()
         {
             if (!post_type_exists(self::OPTION_POST_TYPE_NAME)) {
@@ -156,6 +172,8 @@ namespace BinaryCarpenter\PLUGIN_NS;
 
         private function get_option_raw($key)
         {
+        	if (stripos($key, '_save_html'))
+        		return rawurldecode(get_post_meta($this->post_id, $key, true));
             return unserialize(get_post_meta($this->post_id, $key, true));
         }
 
@@ -204,9 +222,41 @@ namespace BinaryCarpenter\PLUGIN_NS;
             return $default;
         }
 
+
+	    /**
+	     * @param $key
+	     * @param string $default
+	     * @param bool $accept_blank
+	     *
+	     * @return mixed|string
+	     */
+	    public function get_html($key, $default = '', $accept_blank = false)
+	    {
+		    $output = $this->get_option_raw($key);
+		    if (!$this->is_empty($key))
+		    {
+			    if ($output == '')
+			    {
+				    if ($accept_blank)
+					    return $output;
+				    else
+					    return $default;
+			    }
+
+			    return $output;
+		    }
+		    return $default;
+	    }
+
+	    /**
+	     * @param $key
+	     * @param string $default
+	     * @param bool $accept_blank
+	     *
+	     * @return mixed|string
+	     */
         public function get_string($key, $default = '', $accept_blank = false)
         {
-
             $output = $this->get_option_raw($key);
             if (!$this->is_empty($key))
             {
@@ -248,8 +298,9 @@ namespace BinaryCarpenter\PLUGIN_NS;
          * @param $value
          * @param bool $raw save the value as raw or serialize it
          */
-        public function set($key, $value, $raw = false)
+        public function set($key, $value, $raw = false, $html = false)
         {
+        	//change the literal boolean (from js) to php boolean
             $value = $value === "true" ? true : $value;
             $value = $value === "false" ? false : $value;
 
@@ -257,7 +308,10 @@ namespace BinaryCarpenter\PLUGIN_NS;
             $key = sanitize_text_field($key);
             if ($raw)
                 update_post_meta($this->post_id, $key, sanitize_text_field($value));
+            else if ($html)
+                update_post_meta($this->post_id, $key, wp_kses_post($value));
             else
                 update_post_meta($this->post_id, $key, serialize($value));
         }
+
     }

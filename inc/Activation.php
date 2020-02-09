@@ -6,7 +6,7 @@
  *
  * Always put this in a subfolder of the plugin root
  */
-namespace BinaryCarpenter\PLUGIN_NS;
+namespace BinaryCarpenter\BC_AA;
     class Activation
     {
 

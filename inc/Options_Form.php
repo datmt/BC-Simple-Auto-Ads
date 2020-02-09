@@ -6,12 +6,12 @@
  * Time: 10:10 AM
  */
 
-namespace BinaryCarpenter\PLUGIN_NS;
-use BinaryCarpenter\PLUGIN_NS\Config as Config;
+namespace BinaryCarpenter\BC_AA;
+use BinaryCarpenter\BC_AA\Config as Config;
 
 /**
  * Class Options_Form
- * @package BinaryCarpenter\PLUGIN_NS
+ * @package BinaryCarpenter\BC_AA
  * This class, will be used across multiple BC plugins. They all share one common custom post type to store
  * plugins' settings
  *
@@ -20,7 +20,7 @@ class Options_Form
 {
     private $option_name, $option_post_id;
     private $options;
-    const AJAX_SAVE_FORM = 'bc_ultimate_checkout_ajax';//Used to store form settings, must be different across plugins
+    const AJAX_SAVE_FORM = 'bc_simple_auto_ads';//Used to store form settings, must be different across plugins
     const REDIRECT_URL = 'redirect_url';
 
 
@@ -73,6 +73,7 @@ class Options_Form
 
     public static function save_form_options()
     {
+
         //save the option to the post ID
         if (!current_user_can('edit_posts')) {
             echo __('You have no right to perform this action.', Config::TEXT_DOMAIN);
@@ -80,7 +81,6 @@ class Options_Form
         }
 
         //check nonce and update the options
-//        dump(check_ajax_referer(self::get_action_name()));
         if (!wp_verify_nonce(sanitize_text_field($_POST['bc_form_security']), sanitize_text_field($_POST['action']))) {
             wp_send_json(array(
                 'status' => 'Error',
@@ -93,8 +93,15 @@ class Options_Form
         $option_post_id = intval($_POST['option_post_id']);
         $option_object = new Options($option_name, $option_post_id);
         //save the settings
+	    //if you want to save as HTML, make sure the field name ($key) ends with _save_html (wtf?)
+
         foreach ($_POST[$option_name] as $key => $value) {
-            $option_object->set($key, $value);
+
+
+        	if (stripos($key, '_save_html'))
+		        $option_object->set($key, $value, false, true);
+        	else
+		        $option_object->set($key, $value);
 
             if ($key == 'title') {
                 wp_update_post(
@@ -107,6 +114,7 @@ class Options_Form
         }
 
 
+
         $option_object->set_option_name($option_name);
 
         $data = array(
@@ -115,7 +123,7 @@ class Options_Form
 
         if (isset($_POST[self::REDIRECT_URL]))
         {
-            $data[self::REDIRECT_URL] = $_POST[self::REDIRECT_URL];
+            $data[self::REDIRECT_URL] = esc_url_raw($_POST[self::REDIRECT_URL]);
         }
         wp_send_json(
             $data
@@ -150,7 +158,7 @@ class Options_Form
     private function get_option_value($option_form_field, $type = 'string')
     {
         switch ($type) {
-            case 'string':
+            case 'string'://duplicate but included for completeness
                 return $this->options->get_string($option_form_field);
                 break;
             case 'int':
@@ -171,9 +179,11 @@ class Options_Form
         }
     }
 
-    /**
-     * @param $option_form_field string: the actual field name in the form, will be prepend by $option_level_1[$option_level_2]
-     */
+	/**
+	 * @param $option_form_field string: the actual field name in the form, will be prepend by $option_level_1[$option_level_2]
+	 *
+	 * @return string
+	 */
     private function generate_form_field($option_form_field)
     {
         return sprintf('%1$s[%2$s]', $this->option_name, $option_form_field);
@@ -182,98 +192,74 @@ class Options_Form
     /**
      * Returns nonce field HTML
      *
-     * @param string $action
+     * @param int $action
      * @param string $name
      * @param bool $referer
      * @internal param bool $echo
      * @return string
      */
-    public static function nonce_field($action = -1, $name = '_wpnonce', $referer = true)
+    public static function nonce_field($action = -1, $name = '_wpnonce', $referer = true, $echo = true)
     {
         $name = esc_attr($name);
-        $return = '<input type="hidden" name="' . $name . '" value="' . wp_create_nonce($action) . '" />';
+	    $html = '<input type="hidden" name="' . $name . '" value="' . wp_create_nonce($action) . '" />';
 
         if ($referer) {
-            $return .= wp_referer_field(false);
+	        $html .= wp_referer_field(false);
         }
-
-        return $return;
-    }
-
-
-    /**
-     * @param string $content html content
-     * @param string $type [error|info|warning|success]
-     * @param bool $closable
-     * @param bool $echo
-     * @return string
-     */
-    public function notice($content, $type, $closable = false, $echo = true)
-    {
-
-        switch ($type)
-        {
-            case 'info':
-                $type_class = 'bc-uk-alert-primary';
-                break;
-
-            case 'success':
-                $type_class = 'bc-uk-alert-success';
-                break;
-
-            case 'warning':
-                $type_class = 'bc-uk-alert-warning';
-                break;
-
-            case 'error':
-                $type_class = 'bc-uk-alert-danger';
-                break;
-
-            default:
-                $type_class = 'bc-uk-alert-primary';
-                break;
-
-        }
-
-        $closable = $closable ? '<a class="bc-uk-alert-close" bc-uk-close></a>' : '';
-
-        $output = sprintf('<div class="%1$s" bc-uk-alert> %2$s <p>%3$s</p> </div>', $type_class, $closable, $content);
 
         if ($echo)
-            echo $output;
+        	echo $html;
         else
-            return $output;
-
+        	return $html;
     }
 
 
-
-
-
-    /**
-     * Returns an input text element
-     *
-     * @param $setting_field_name
-     */
-    public function hidden($setting_field_name)
+	/**
+	 * Returns an input text element
+	 *
+	 * @param $setting_field_name
+	 *
+	 * @return string|void
+	 */
+    public function hidden($setting_field_name, $echo = true)
     {
         $current_value = $this->get_option_value($setting_field_name, 'string');
 
-        echo sprintf('<input type="hidden" name="%1$s" value="%2$s" />', $this->generate_form_field($setting_field_name), $current_value);
+        $html = sprintf('<input type="hidden" name="%1$s" value="%2$s" />', $this->generate_form_field($setting_field_name), $current_value);
+
+	    if ($echo)
+	    	echo $html;
+	    else
+	    	return $html;
 
     }
 
-    public function raw_hidden($key, $value)
+	/**
+	 * @param $key
+	 * @param $value
+	 * @param bool $echo
+	 *
+	 * @return string|void
+	 */
+    public function raw_hidden($key, $value, $echo = true)
     {
-        echo sprintf('<input type="hidden" name="%1$s" value="%2$s" />', $key, $value);
+        $html =  sprintf('<input type="hidden" name="%1$s" value="%2$s" />', $key, $value);
+
+        if ($echo)
+        	echo $html;
+        else
+        	return $html;
     }
 
-    /**
-     * Echos an label element
-     *
-     * @param $field_id
-     * @param string $text
-     */
+	/**
+	 * Echos an label element
+	 *
+	 * @param $field_id
+	 * @param string $text
+	 * @param boolean $echo
+	 *
+	 * @return string|void
+	 */
     public static function label($field_id, $text, $echo = true)
     {
         $output = sprintf('<label for="%1$s" class="bc-doc-label">%2$s</label>', $field_id, $text);
@@ -312,7 +298,7 @@ class Options_Form
 
 
 
-    public function image_picker($setting_field_name, $button_title, $label, $disabled)
+    public function image_picker($setting_field_name, $button_title, $label = '', $disabled = false, $echo = true)
     {
         $disabled = $disabled ? 'disabled' : '';
         $current_value = $this->get_option_value($setting_field_name);
@@ -326,26 +312,43 @@ class Options_Form
         $html .= sprintf('<a class="bc-doc__image-picker-button bc-uk-button bc-uk-button-primary" %1$s>%2$s</a>', $disabled, $button_title);
         $html .= sprintf('<input type="hidden" id="%1$s" class="bc_image_picker_hidden_input" name="%1$s" value="%3$s" %4$s/>', $this->generate_form_field($setting_field_name), $this->option_name, $current_value, $disabled);
 
-        return $html . '</div>';
+        $html .= '</div>';
+
+        if ($echo)
+        	echo $html;
+        else
+        	return $html;
 
     }
 
 
-    /**
-     * Generate a section where one key is associated with an associative array
-     * Keys and Values are in two select fields, side by side
-     *
-     *    _key => array(
-     *       'key' => 'value'
-     *     )
-     */
+	/**
+	 * Generate a section where one key is associated with an associative array
+	 * Keys and Values are in two select fields, side by side
+	 *
+	 *    _key => array(
+	 *       'key' => 'value'
+	 *     )
+	 *
+	 * @param $setting_field_name
+	 * @param $array_values_1
+	 * @param $array_values_2
+	 * @param $value_1_title
+	 * @param $value_2_title
+	 * @param bool $disabled
+	 * @param bool $echo
+	 *
+	 * @return string|void
+	 */
     public function key_select_select(
             $setting_field_name,
             $array_values_1,
             $array_values_2,
             $value_1_title,
             $value_2_title,
-            $disabled = false)
+            $disabled = false,
+			$echo = true
+			)
     {
         //get the current value, this should be an associated array
         $current_value = $this->get_option_value($setting_field_name, 'array');
@@ -361,14 +364,19 @@ class Options_Form
         foreach ($current_value as $key => $value)
         {
             $html .= self::flex_data_row(array(
-                $this->raw_select($array_values_1, $key),
-                $this->raw_select($array_values_2, $value)
+                $this->no_key_select($array_values_1, $key),
+                $this->no_key_select($array_values_2, $value)
             ), true, true);
         }
 
 
 
-        return sprintf('<div class="bc-key-select-select bc-data-field" data-name="%1$s">%2$s</div>', $setting_field_name, $html);
+        $html =  sprintf('<div class="bc-key-select-select bc-data-field" data-name="%1$s">%2$s</div>', $setting_field_name, $html);
+
+        if ($echo)
+        	echo $html;
+        else
+        	return $html;
 
     }
 
@@ -394,15 +402,18 @@ class Options_Form
         return sprintf ('<div class="bc-single-data-row bc-uk-flex">%1$s %2$s %3$s </div>', $html, $minus_sign, $add_sign);
     }
 
-    /**
-     * Print the select, without field name.
-     * This function print a select as a big field (that has key, which is the field name)
-     * One case is to have a key then two selects
-     * For example, select which category goes with which popup
-     *
-     * @param array $values_array must be an associative array
-     */
-    private function raw_select($values_array, $selected_value, $multiple = false)
+	/**
+	 * Print the select, without field name.
+	 * This function print a select as a big field (that has key, which is the field name)
+	 * One case is to have a key then two selects
+	 * For example, select which category goes with which popup
+	 * This field doesn't have an echo option. It's used internally
+	 *
+	 * @param array $values_array must be an associative array
+	 *
+	 * @return string|void
+	 */
+    private function no_key_select($values_array, $selected_value, $multiple = false)
     {
         $html = '';
         foreach($values_array as $value => $name)
@@ -413,7 +424,10 @@ class Options_Form
 
         $multiple = $multiple ? 'multiple' : '';
         //mark this select field as bc-no-key-field so js will exclude it later when saving values later
-        return sprintf('<select class="bc-uk-select bc-no-key-field" %1$s>%2$s</select>', $multiple, $html);
+	    $html = sprintf('<select class="bc-uk-select bc-no-key-field" %1$s>%2$s</select>', $multiple, $html);
+
+		return $html;
+
     }
 
     /**
@@ -422,10 +436,10 @@ class Options_Form
      * @param $setting_field_name
      * @param $values
      * @param bool $disabled
-     * @return string
+     * @return string|void
      */
     public function select($setting_field_name, $values, $label = '',
-                           $disabled = false, $multiple = false)
+                           $disabled = false, $multiple = false, $echo = true)
     {
 
         $current_value = $this->get_option_value($setting_field_name);
@@ -451,7 +465,12 @@ class Options_Form
 
         if ($label != '')
             $html = sprintf('<label for="%1$s">%2$s</label>', $setting_field_name, $label) . $html;
-        return $html . '</select>';
+
+        $html  .= '</select>';
+        if ($echo)
+            echo $html;
+        else
+        	return $html;
     }
 
     /**
@@ -461,7 +480,7 @@ class Options_Form
      * @param int $level heading level, similar to h1 to h6 but with smaller text. There are only three levels
      * with text size 38px, 24px and 18px
      *
-     * @return string
+     * @return string|void
      *
      */
     public function heading($content, $level = 1, $echo = true)
@@ -488,9 +507,9 @@ class Options_Form
      * @param string $title
      * @param array $dimensions width and height of image or icon, default 16 x 16
      *
-     * @return string
+     * @return string|void
      */
-    public function radio($setting_field_name, $values, $layout = 'row', $label_type = 'text', $title = '', $dimensions = array(16, 16))
+    public function radio($setting_field_name, $values, $layout = 'row', $label_type = 'text', $title = '', $dimensions = array(16, 16), $echo = true)
     {
         $current_value = $this->get_option_value($setting_field_name);
 
@@ -549,18 +568,33 @@ class Options_Form
         if ($title != '')
             $html = sprintf('<label class="bc-doc-label">%1$s</label>', $title) . $html;
 
-        return $html;
+        if ($echo)
+        	echo $html;
+        else
+            return $html;
 
     }
 
-    public static function flex_section($content, $flex_class = 'bc-uk-flex-left')
+	/**
+	 * @param $content
+	 * @param string $flex_class
+	 * @param bool $echo
+	 *
+	 * @return string|void
+	 */
+    public static function flex_section($content, $flex_class = 'bc-uk-flex-left', $echo = true)
     {
         $html = sprintf('<div class="bc-uk-flex %1$s">', $flex_class);
 
         foreach ($content as $c)
             $html .= sprintf('<div>%1$s</div>', $c);
 
-        return $html . '</div>';
+        $html .= '</div>';
+
+        if ($echo)
+        	echo $html;
+        else
+        	return $html;
     }
 
 
@@ -570,21 +604,62 @@ class Options_Form
 	 * @param $setting_field_name
 	 * @param string $placeholder
 	 * @param bool $disabled
+	 * @param int $cols number of rows
 	 *
 	 * @return void|string
 	 */
-    public function textarea($setting_field_name, $placeholder = '', $disabled = false, $echo = true)
+    public function textarea($setting_field_name, $placeholder = '', $rows = 0, $disabled = false, $echo = true)
     {
 
         $current_value = $this->get_option_value($setting_field_name);
 
+        $rows_string = $rows > 0 ? sprintf('rows=%1$s', $rows) : "";
+
         $disabled = $disabled ? 'disabled' : '';
-        $html = sprintf('<textarea name="%1$s" placeholder="%4$s" class="bc-uk-textarea"  %3$s>%2$s</textarea>', $this->generate_form_field($setting_field_name), $current_value, $disabled, $placeholder);
+        $html = sprintf('<textarea name="%1$s" %5$s placeholder="%4$s" class="bc-uk-textarea"  %3$s>%2$s</textarea>', $this->generate_form_field($setting_field_name), $current_value, $disabled, $placeholder, $rows_string);
+
+
 
         if ($echo)
         	echo $html;
         else
         	return $html;
+    }
+
+	/**
+	 * This is a wrapper function for textarea above but used to accept HTML input
+	 * It checks the field name to make sure it contains _save_html
+	 *
+	 * @param $setting_field_name
+	 * @param string $placeholder
+	 * @param bool $disabled
+	 * @param bool $echo
+	 * @param int $rows
+	 *
+	 * @return string|void
+	 *
+	 */
+    public function html_string($setting_field_name, $placeholder = '', $rows = 0,  $disabled = false, $echo = true)
+    {
+    	if (stripos($setting_field_name, '_save_html') === false)
+	    {
+	    	echo '<h1 style="color: red;">You want to save as HTML but got the wrong field name. End it with _save_html</h1>';
+	    	return;
+	    }
+
+	    $current_value = esc_html($this->get_option_value($setting_field_name));
+
+	    $rows_string = $rows > 0 ? sprintf('rows=%1$s', $rows) : "";
+
+	    $disabled = $disabled ? 'disabled' : '';
+	    $html = sprintf('<textarea name="%1$s" %5$s placeholder="%4$s" class="bc-uk-textarea"  %3$s>%2$s</textarea>', $this->generate_form_field($setting_field_name), $current_value, $disabled, $placeholder, $rows_string);
+
+
+
+	    if ($echo)
+		    echo $html;
+	    else
+		    return $html;
     }
 
 
@@ -596,16 +671,56 @@ class Options_Form
      * @param string $label
      * @return string
      */
-    public function checkbox($setting_field_name, $disabled = false, $label = '')
+    public function checkbox($setting_field_name, $disabled = false, $label = '', $echo = true)
     {
 
         $current_value = $this->get_option_value($setting_field_name, 'bool');
 
         $disabled = $disabled ? 'disabled' : '';
         $state = checked(1, $current_value, false);
-        return '<div>' .
-            sprintf('<label class="bc-doc-label" for="%1$s"><input type="checkbox" name="%1$s" %2$s %3$s class="bc-uk-checkbox" value="1" id="%2$s" /> %4$s &nbsp;&nbsp;</label>', $this->generate_form_field($setting_field_name), $state, $disabled, $label)
+        $html =  '<div>' .
+            sprintf('<label class="bc-doc-label" for="%1$s"><input type="checkbox" name="%1$s" %2$s %3$s class="bc-uk-checkbox" value="" id="%2$s" /> %4$s &nbsp;&nbsp;</label>', $this->generate_form_field($setting_field_name), $state, $disabled, $label)
             . '</div>';
+
+        if ($echo)
+        	echo $html;
+        else
+        	return $html;
+
+    }
+
+	/**
+	 * @param $setting_field_name
+	 * @param $options array associated array with format key => value where key is the value of a single checkbox and value is the label of that checkbox
+	 * @param bool $disabled
+	 * @param string $label
+	 * @param bool $echo
+	 * @param string $dislay display in line or block
+	 *
+	 * @return void|string
+	 */
+    public function multiple_checkbox($setting_field_name, $options,  $disabled = false, $label = '', $dislay = 'inline', $echo = true)
+    {
+	    $current_value = $this->get_option_value($setting_field_name, 'array');
+
+
+	    $html = '';
+
+
+	    $display_style = $dislay == 'block' ? 'style="display:block;"' : '';
+	    foreach ($options as $key => $value)
+	    {
+	    	$state = in_array($key, $current_value) ? 'checked' : '';
+	    	$html .= sprintf('<label class="bc-doc-label" %6$s for="%1$s"><input type="checkbox" name="%1$s" %2$s %3$s class="bc-uk-checkbox" value="%5$s" id="%2$s" /> %4$s &nbsp;&nbsp;</label>', $this->generate_form_field($setting_field_name), $state, $disabled, $value, $key, $display_style);
+	    }
+
+
+	    if ($echo)
+	    	echo $html;
+	    else
+	    	return $html;
+
+
 
     }
 
@@ -620,6 +735,11 @@ class Options_Form
     }
 
 
+	/**
+	 * @param bool $echo
+	 *
+	 * @return string|void
+	 */
     public function hr($echo = false)
     {
         if ($echo)
@@ -628,6 +748,12 @@ class Options_Form
             return '<hr class="bc-uk-hr" />';
     }
 
+	/**
+	 * @param $text
+	 * @param bool $echo
+	 *
+	 * @return string|void
+	 */
     public function submit_button($text, $echo = true)
     {
 

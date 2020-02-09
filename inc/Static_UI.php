@@ -3,7 +3,7 @@
 /**
  * This class print UI elements that aren't dependent on any particular form (without creating a form instance)
  */
-namespace BinaryCarpenter\PLUGIN_NS;
+namespace BinaryCarpenter\BC_AA;
 class Static_UI
 {
     /**
@@ -12,7 +12,7 @@ class Static_UI
      * @param $field_id
      * @param string $text
      *
-     * @return string
+     * @return string|void
      */
     public static function label($field_id, $text, $echo = true)
     {
@@ -36,7 +36,19 @@ class Static_UI
         else
             return $html;
     }
-    
+
+    public static function hr($echo = true)
+    {
+        if ($echo)
+            echo '<hr />';
+        else
+            return '<hr />';
+
+    }
+
+
+
+
     /**
      * Close an open form
      */
@@ -330,22 +342,60 @@ class Static_UI
                     //Collect data from fields that have keys (name), if the fields don't have keys, they are part of a
                     //bigger field (such as key_select_select)
 
+                    //this array keeps multiple checkboxes that were processed
+                    //multiple checkboxes fields need to processed only once to avoid value override
+                    let multiple_checkbox_processed = [];
+
                     _.each(the_button.closest('form').find('input, select, textarea').not('.bc-no-key-field'), function (i) {
 
                         let input = $(i);
                         let input_name = (input).attr('name');
                         let input_value = undefined;
 
+
                         //for checkbox, get value of the checked one
-                        if (input.attr('type') === 'checkbox')
+                        //this is for simple checkbox, where the value is yes or no/true or false
+                        //in case of multiple checkbox, we need to grab multiple values
+                        if (input.attr('type') === 'checkbox' && input.val() === "")
                             input_value = input.is(":checked");
+                        //save the multiple checkbox
+                        else if (input.attr('type') === 'checkbox' && input.val() !== "")
+                        {
+                            //if the first checkbox with this name was processed, we skip because the values
+                            //of all available options are saved in the first place
+                            if (typeof multiple_checkbox_processed[input_name] === 'undefined')
+                            {
+                                input_value = [];
+
+                                _.each(the_button.closest('form').find('input[name="'+input_name+'"]'), function(this_input_name){
+                                    if ($(this_input_name).is(":checked"))
+                                        input_value.push($(this_input_name).val())
+                                });
+
+                                //add the checkbox name to this of processed checkbox so the remaining checkboxes
+                                //with the same name will not be processed again
+                                multiple_checkbox_processed.push(input_name);
+                            }
+
+
+                        }
                         else if (input.attr('type') === 'radio') {
                             //for radio input, since there are many radios share the same name, only get the value of checked radio
                             if (input.is(':checked'))
                                 input_value = input.val();
                         }
                         else
-                            input_value = input.val();
+                        {
+
+                            if (input.is('textarea') && input_name.indexOf('_save_html'))
+                            {
+                                console.log('saving HTML field');
+                                input_value = encodeURIComponent(input.val());
+                            }
+
+                            else
+                                input_value = input.val();
+                        }
 
                         if (typeof (input_value) !== 'undefined')
                             data[input_name] = input_value;
